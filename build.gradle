@@ -1,0 +1,38 @@
+group 'com.mobisist.components'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.0.3'
+
+    repositories {
+        maven {
+            url "http://repo.mobisist.com/repository/maven-public/"
+        }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven {
+        url "http://repo.mobisist.com/repository/maven-public/"
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    // weixin-java-tools
+    compile 'me.chanjar:weixin-java-mp:1.3.3'
+
+    // baidu push
+    compile files("lib/bccs-api-3.0.1.jar")
+
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
