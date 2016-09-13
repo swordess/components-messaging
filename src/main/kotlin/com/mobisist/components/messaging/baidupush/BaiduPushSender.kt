@@ -24,10 +24,19 @@ class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
 
     private val logger = LoggerFactory.getLogger(BaiduPushSender::class.java)
 
-    lateinit var config: BaiduPushConfig
+    lateinit var androidConfig: BaiduPushConfig
+    lateinit var iosConfig: BaiduPushConfig
 
-    private val client: BaiduPushClient by lazy {
-        BaiduPushClient(PushKeyPair(config.apiKey, config.secretKey)).apply {
+    private val androidClient: BaiduPushClient by lazy {
+        BaiduPushClient(PushKeyPair(androidConfig.apiKey, androidConfig.secretKey)).apply {
+            setChannelLogHandler {
+                logger.debug(it.message)
+            }
+        }
+    }
+
+    private val iosClient: BaiduPushClient by lazy {
+        BaiduPushClient(PushKeyPair(iosConfig.apiKey, iosConfig.secretKey)).apply {
             setChannelLogHandler {
                 logger.debug(it.message)
             }
@@ -39,9 +48,14 @@ class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
     @Throws(BaiduPushMessagingException::class)
     override fun send(msg: BaiduPushMessage) {
         try {
+            val client = when(msg) {
+                is BaiduPushMessage.AndroidPushMessage -> androidClient
+                is BaiduPushMessage.IosPushMessage -> iosClient
+            }
+
             val req = msg.req
             when (req) {
-                is PushMsgToSingleDeviceRequest -> sendSingleMsg(req)
+                is PushMsgToSingleDeviceRequest -> sendSingleMsg(client, req)
                 else -> throw BaiduPushMessagingException("unsupported req type: ${msg.req.javaClass}")
             }
         } catch (e: BaiduPushMessagingException) {
@@ -58,7 +72,7 @@ class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
         }
     }
 
-    private fun sendSingleMsg(msg: PushMsgToSingleDeviceRequest) {
+    private fun sendSingleMsg(client: BaiduPushClient, msg: PushMsgToSingleDeviceRequest) {
         val resp = client.pushMsgToSingleDevice(msg)
         logger.debug("msgId: ${resp.msgId}, sendTime: ${resp.sendTime}")
     }

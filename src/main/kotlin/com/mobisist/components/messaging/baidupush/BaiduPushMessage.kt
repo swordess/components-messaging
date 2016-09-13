@@ -20,31 +20,57 @@ enum class DeviceType(val intValue: Int) {
     IOS(4)
 }
 
-class BaiduPushMessage : Message {
+sealed class BaiduPushMessage : Message {
 
     lateinit var req: PushRequest
 
-    private val body = mutableMapOf<String, Any?>()
+    class AndroidPushMessage : BaiduPushMessage()
+    class IosPushMessage : BaiduPushMessage()
 
-    var PushMsgToSingleDeviceRequest.title by body
-    var PushMsgToSingleDeviceRequest.description by body
-    var PushMsgToSingleDeviceRequest.custom_content by body
+    open class MsgBuilder {
 
-    @JvmOverloads
-    fun pushMsgToSingleDeviceRequest(generateMsg: Boolean = true,
-                                     init: PushMsgToSingleDeviceRequest.() -> Unit): PushMsgToSingleDeviceRequest {
-        val req = PushMsgToSingleDeviceRequest()
-        req.init()
-        if (generateMsg) {
-            req.message = Gson().toJson(body)
+        internal val body = mutableMapOf<String, Any?>()
+
+        @JvmOverloads
+        fun pushMsgToSingleDeviceRequest(generateMsg: Boolean = true,
+                                         init: PushMsgToSingleDeviceRequest.() -> Unit): PushMsgToSingleDeviceRequest {
+            val req = PushMsgToSingleDeviceRequest()
+            req.init()
+            if (generateMsg) {
+                req.message = Gson().toJson(body)
+            }
+            return req
         }
-        return req
+
     }
 
-}
+    class AndroidMsgBuilder : MsgBuilder() {
+        var title: String by body
+        var description: String by body
+        var custom_content: Map<String, Any> by body
+    }
 
-fun baiduPushMessage(reqBuilder: BaiduPushMessage.() -> PushRequest): BaiduPushMessage {
-    val msg = BaiduPushMessage()
-    msg.req = msg.reqBuilder()
-    return msg
+    class IOSMsgBuilder : MsgBuilder() {
+
+        private val aps: MutableMap<String, Any> = body.getOrPut("aps", { mutableMapOf<String, Any>() }) as MutableMap<String, Any>
+
+        var alert: String by aps
+        var sound: String by aps
+        var badge: Int by aps
+
+        infix fun String.setTo(value: Any) {
+            body[this] = value
+        }
+
+    }
+
+    companion object {
+
+        @JvmStatic
+        infix fun toAndroid(reqBuilder: AndroidMsgBuilder.() -> PushRequest) = AndroidPushMessage().apply { req = AndroidMsgBuilder().reqBuilder() }
+
+        @JvmStatic
+        infix fun toIos(reqBuilder: IOSMsgBuilder.() -> PushRequest) = IosPushMessage().apply { req = IOSMsgBuilder().reqBuilder() }
+    }
+
 }
