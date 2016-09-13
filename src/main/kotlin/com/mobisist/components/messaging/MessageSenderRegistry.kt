@@ -1,8 +1,4 @@
-package com.ysdr365.messaging
-
-import com.mobisist.components.messaging.Message
-import com.mobisist.components.messaging.MessageSender
-import com.mobisist.components.messaging.MessagingException
+package com.mobisist.components.messaging
 
 class MessageSenderRegistry {
 
