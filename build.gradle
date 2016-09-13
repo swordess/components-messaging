@@ -39,6 +39,17 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
+
+/* ***** common for local deploy and remote deploy ***** */
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+
+/* ***** local maven deploy ***** */
+
 // can be utilized for:
 //   $ gradle publishToMavenLocal
 // which is helpful when local testing
@@ -46,8 +57,16 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            artifact sourcesJar
         }
     }
+}
+
+
+/* ***** remote maven deploy ***** */
+
+artifacts {
+    archives sourcesJar
 }
 
 uploadArchives {
