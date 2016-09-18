@@ -67,10 +67,10 @@ sealed class BaiduPushMessage : Message {
     companion object {
 
         @JvmStatic
-        infix fun toAndroid(reqBuilder: AndroidMsgBuilder.() -> PushRequest) = AndroidPushMessage().apply { req = AndroidMsgBuilder().reqBuilder() }
+        fun toAndroid(reqBuilder: AndroidMsgBuilder.() -> PushRequest) = AndroidPushMessage().apply { req = AndroidMsgBuilder().reqBuilder() }
 
         @JvmStatic
-        infix fun toIos(reqBuilder: IOSMsgBuilder.() -> PushRequest) = IosPushMessage().apply { req = IOSMsgBuilder().reqBuilder() }
+        fun toIos(reqBuilder: IOSMsgBuilder.() -> PushRequest) = IosPushMessage().apply { req = IOSMsgBuilder().reqBuilder() }
     }
 
 }

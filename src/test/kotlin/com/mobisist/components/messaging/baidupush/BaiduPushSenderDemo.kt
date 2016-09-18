@@ -13,7 +13,7 @@ private fun sendAndroidPush() {
         }
     }
 
-    val msg = BaiduPushMessage toAndroid {
+    val msg = BaiduPushMessage.toAndroid {
         pushMsgToSingleDeviceRequest {
             channelId = "3478330428537063857"
             messageType = MessageType.NOTIFICATION.intValue
@@ -46,7 +46,7 @@ private fun sendIosPush() {
         }
     }
 
-    val msg = BaiduPushMessage toIos {
+    val msg = BaiduPushMessage.toIos {
         pushMsgToSingleDeviceRequest {
             channelId = "3478330428537063857"
             messageType = MessageType.NOTIFICATION.intValue
