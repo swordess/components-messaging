@@ -6,15 +6,16 @@ import com.mobisist.components.messaging.MessageSender
 import com.mobisist.components.messaging.sms.SmsMessage
 import com.mobisist.components.messaging.sms.SmsMessagingException
 import com.mobisist.components.messaging.support.http.apache.post
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class YunPianConfig {
     lateinit var apikey: String
 }
 
-class YunPianSender : MessageSender<SmsMessage, YunPianResponse> {
+open class YunPianSender : MessageSender<SmsMessage, YunPianResponse> {
 
-    private val logger = LoggerFactory.getLogger(YunPianSender::class.java)
+    protected val logger: Logger = LoggerFactory.getLogger(YunPianSender::class.java)
 
     lateinit var config: YunPianConfig
 

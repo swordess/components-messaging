@@ -9,13 +9,14 @@ import me.chanjar.weixin.mp.api.WxMpService
 import me.chanjar.weixin.mp.api.WxMpServiceImpl
 import me.chanjar.weixin.mp.bean.WxMpTemplateData
 import me.chanjar.weixin.mp.bean.WxMpTemplateMessage
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class WechatPushMessagingException(cause: Throwable) : MessagingException(cause)
 
-class WechatPushSender : MessageSender<WechatPushMessage, Unit> {
+open class WechatPushSender : MessageSender<WechatPushMessage, Unit> {
 
-    private val logger = LoggerFactory.getLogger(WechatPushSender::class.java)
+    protected val logger: Logger = LoggerFactory.getLogger(WechatPushSender::class.java)
 
     var templateIdProvider: TemplateIdProvider? = null
 

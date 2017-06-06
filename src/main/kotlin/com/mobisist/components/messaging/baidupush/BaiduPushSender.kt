@@ -8,6 +8,7 @@ import com.baidu.yun.push.model.PushMsgToSingleDeviceRequest
 import com.mobisist.components.messaging.Message
 import com.mobisist.components.messaging.MessageSender
 import com.mobisist.components.messaging.MessagingException
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class BaiduPushConfig {
@@ -20,9 +21,9 @@ class BaiduPushMessagingException : MessagingException {
     constructor(msg: String) : super(msg)
 }
 
-class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
+open class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
 
-    private val logger = LoggerFactory.getLogger(BaiduPushSender::class.java)
+    protected val logger: Logger = LoggerFactory.getLogger(BaiduPushSender::class.java)
 
     lateinit var androidConfig: BaiduPushConfig
     lateinit var iosConfig: BaiduPushConfig
