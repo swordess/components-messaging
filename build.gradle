@@ -30,6 +30,8 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
+    compile "com.google.code.gson:gson:2.2.2"
+
     // weixin-java-tools
     compile 'me.chanjar:weixin-java-mp:1.3.3'
 
