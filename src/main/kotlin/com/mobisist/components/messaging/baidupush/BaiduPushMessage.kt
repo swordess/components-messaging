@@ -58,6 +58,12 @@ sealed class BaiduPushMessage : Message {
         var sound: String by aps
         var badge: Int by aps
 
+        var contentAvailable: String?
+            get() = aps["content-available"] as String?
+            set(value) {
+                aps["content-available"] = value.toString()
+            }
+
         infix fun String.setTo(value: Any) {
             body[this] = value
         }
