@@ -18,7 +18,7 @@ private fun sendAndroidPush() {
     val msg = sender.buildMsgToAndroid {
         pushMsgToSingleDeviceRequest {
             channelId = "3478330428537063857"
-            messageType = MessageType.NOTIFICATION.intValue
+            messageType = MessageType.NOTIFICATION.rawValue
             // 5 mins
             msgExpires = 300
 
@@ -53,7 +53,7 @@ private fun sendIOSPush() {
     val msg = sender.buildMsgToIOS {
         pushMsgToSingleDeviceRequest {
             channelId = "3478330428537063857"
-            messageType = MessageType.NOTIFICATION.intValue
+            messageType = MessageType.NOTIFICATION.rawValue
             // 5 mins
             msgExpires = 300
 

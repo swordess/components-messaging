@@ -5,8 +5,7 @@ import com.baidu.yun.push.model.PushRequest
 import com.google.gson.Gson
 import com.mobisist.components.messaging.Message
 
-// TODO rename intValue to rawValue
-enum class MessageType(val intValue: Int) {
+enum class MessageType(val rawValue: Int) {
 
     // 透传消息
     MESSAGE(0),
@@ -16,12 +15,12 @@ enum class MessageType(val intValue: Int) {
 
 }
 
-enum class DeviceType(val intValue: Int) {
+enum class DeviceType(val rawValue: Int) {
     ANDROID(3),
     IOS(4)
 }
 
-enum class IOSDeployStatus(val intValue: Int) {
+enum class IOSDeployStatus(val rawValue: Int) {
     DEVELOPMENT(1),
     PRODUCT(2)
 }
@@ -72,7 +71,7 @@ sealed class BaiduPushMessage(val config: String) : Message {
 
         init {
             defaultSettings(PushRequest::class.java) {
-                setDeviceType(DeviceType.ANDROID.intValue)
+                setDeviceType(DeviceType.ANDROID.rawValue)
             }
         }
     }
@@ -93,10 +92,10 @@ sealed class BaiduPushMessage(val config: String) : Message {
 
         init {
             defaultSettings(PushRequest::class.java) {
-                setDeviceType(DeviceType.IOS.intValue)
+                setDeviceType(DeviceType.IOS.rawValue)
             }
             defaultSettings(PushMsgToSingleDeviceRequest::class.java) {
-                deployStatus = it.deployStatus.intValue
+                deployStatus = it.deployStatus.rawValue
             }
         }
 

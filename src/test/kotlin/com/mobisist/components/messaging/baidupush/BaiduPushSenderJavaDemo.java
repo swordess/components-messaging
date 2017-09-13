@@ -23,7 +23,7 @@ public class BaiduPushSenderJavaDemo {
         BaiduPushMessage msg = sender.buildMsgToAndroid(dsl ->
                 dsl.pushMsgToSingleDeviceRequest(req -> {
                     req.setChannelId("3478330428537063857");
-                    req.setMessageType(MessageType.NOTIFICATION.getIntValue());
+                    req.setMessageType(MessageType.NOTIFICATION.getRawValue());
                     // 5 mins
                     req.setMsgExpires(300);
 
@@ -56,7 +56,7 @@ public class BaiduPushSenderJavaDemo {
         BaiduPushMessage msg = sender.buildMsgToIOS(dsl ->
                 dsl.pushMsgToSingleDeviceRequest(req -> {
                     req.setChannelId("3478330428537063857");
-                    req.setMessageType(MessageType.NOTIFICATION.getIntValue());
+                    req.setMessageType(MessageType.NOTIFICATION.getRawValue());
                     // 5 mins
                     req.setMsgExpires(300);
 
