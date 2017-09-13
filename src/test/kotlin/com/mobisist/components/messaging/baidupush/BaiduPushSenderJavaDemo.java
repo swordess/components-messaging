@@ -13,18 +13,17 @@ public class BaiduPushSenderJavaDemo {
     }
 
     private static void sendAndroidPush() {
-        BaiduPushConfig config = new BaiduPushConfig();
-        config.setApiKey("gv0ft0gzCdO19FL5OgYIqYG9");
-        config.setSecretKey("zrRgdC2LlPancB3yxrmacyosdtLh3k92");
+        BaiduPushConfig.AndroidPushConfig defaultConfig = new BaiduPushConfig.AndroidPushConfig();
+        defaultConfig.setApiKey("gv0ft0gzCdO19FL5OgYIqYG9");
+        defaultConfig.setSecretKey("zrRgdC2LlPancB3yxrmacyosdtLh3k92");
 
         BaiduPushSender sender = new BaiduPushSender();
-        sender.setAndroidConfig(config);
+        sender.setAndroidConfigProvider((config) -> defaultConfig);
 
-        BaiduPushMessage msg = BaiduPushMessage.toAndroid(dsl ->
+        BaiduPushMessage msg = sender.buildMsgToAndroid(dsl ->
                 dsl.pushMsgToSingleDeviceRequest(req -> {
                     req.setChannelId("3478330428537063857");
                     req.setMessageType(MessageType.NOTIFICATION.getIntValue());
-                    req.setDeviceType(DeviceType.ANDROID.getIntValue());
                     // 5 mins
                     req.setMsgExpires(300);
 
@@ -46,21 +45,20 @@ public class BaiduPushSenderJavaDemo {
     }
 
     private static void sendIosPush() {
-        BaiduPushConfig config = new BaiduPushConfig();
-        config.setApiKey("gv0ft0gzCdO19FL5OgYIqYG9");
-        config.setSecretKey("zrRgdC2LlPancB3yxrmacyosdtLh3k92");
+        BaiduPushConfig.IOSPushConfig defaultConfig = new BaiduPushConfig.IOSPushConfig();
+        defaultConfig.setApiKey("gv0ft0gzCdO19FL5OgYIqYG9");
+        defaultConfig.setSecretKey("zrRgdC2LlPancB3yxrmacyosdtLh3k92");
+        defaultConfig.setDeployStatus(IOSDeployStatus.DEVELOPMENT);
 
         BaiduPushSender sender = new BaiduPushSender();
-        sender.setIosConfig(config);
+        sender.setIosConfigProvider((config) -> defaultConfig);
 
-        BaiduPushMessage msg = BaiduPushMessage.toIos(dsl ->
+        BaiduPushMessage msg = sender.buildMsgToIos(dsl ->
                 dsl.pushMsgToSingleDeviceRequest(req -> {
                     req.setChannelId("3478330428537063857");
                     req.setMessageType(MessageType.NOTIFICATION.getIntValue());
-                    req.setDeviceType(DeviceType.ANDROID.getIntValue());
                     // 5 mins
                     req.setMsgExpires(300);
-                    req.setDeployStatus(1);
 
                     dsl.setAlert("Title goes here");
                     dsl.setSound("default");

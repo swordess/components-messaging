@@ -5,15 +5,25 @@ import com.baidu.yun.push.client.BaiduPushClient
 import com.baidu.yun.push.exception.PushClientException
 import com.baidu.yun.push.exception.PushServerException
 import com.baidu.yun.push.model.PushMsgToSingleDeviceRequest
+import com.baidu.yun.push.model.PushRequest
 import com.mobisist.components.messaging.Message
 import com.mobisist.components.messaging.MessageSender
 import com.mobisist.components.messaging.MessagingException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.concurrent.ConcurrentHashMap
 
-class BaiduPushConfig {
+sealed class BaiduPushConfig {
+
     lateinit var apiKey: String
     lateinit var secretKey: String
+
+    class AndroidPushConfig : BaiduPushConfig()
+
+    class IOSPushConfig : BaiduPushConfig() {
+        lateinit var deployStatus: IOSDeployStatus
+    }
+
 }
 
 class BaiduPushMessagingException : MessagingException {
@@ -25,10 +35,14 @@ open class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
 
     private val logger: Logger = LoggerFactory.getLogger(BaiduPushSender::class.java)
 
-    lateinit var androidConfig: BaiduPushConfig
-    lateinit var iosConfig: BaiduPushConfig
+    private val androidClientCaches = ConcurrentHashMap<String, BaiduPushClient>()
+    private val iosClientCaches = ConcurrentHashMap<String, BaiduPushClient>()
 
-    private val androidClient: BaiduPushClient by lazy {
+    lateinit var androidConfigProvider: (String) -> BaiduPushConfig.AndroidPushConfig
+    lateinit var iosConfigProvider: (String) -> BaiduPushConfig.IOSPushConfig
+
+    private fun androidClientFor(config: String) = androidClientCaches.getOrPut(config) {
+        val androidConfig = androidConfigProvider(config)
         BaiduPushClient(PushKeyPair(androidConfig.apiKey, androidConfig.secretKey)).apply {
             setChannelLogHandler {
                 logger.debug(it.message)
@@ -36,7 +50,8 @@ open class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
         }
     }
 
-    private val iosClient: BaiduPushClient by lazy {
+    private fun iosClientFor(config: String) = iosClientCaches.getOrPut(config) {
+        val iosConfig = iosConfigProvider(config)
         BaiduPushClient(PushKeyPair(iosConfig.apiKey, iosConfig.secretKey)).apply {
             setChannelLogHandler {
                 logger.debug(it.message)
@@ -50,8 +65,8 @@ open class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
     override fun send(msg: BaiduPushMessage) {
         try {
             val client = when(msg) {
-                is BaiduPushMessage.AndroidPushMessage -> androidClient
-                is BaiduPushMessage.IosPushMessage -> iosClient
+                is BaiduPushMessage.AndroidPushMessage -> androidClientFor(msg.config)
+                is BaiduPushMessage.IosPushMessage -> iosClientFor(msg.config)
             }
 
             val req = msg.req
@@ -76,6 +91,20 @@ open class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
     private fun sendSingleMsg(client: BaiduPushClient, msg: PushMsgToSingleDeviceRequest) {
         val resp = client.pushMsgToSingleDevice(msg)
         logger.debug("msgId: ${resp.msgId}, sendTime: ${resp.sendTime}")
+    }
+
+    @JvmOverloads
+    fun buildMsgToAndroid(config: String = "default", reqBuilder: BaiduPushMessage.AndroidMsgBuilder.() -> PushRequest): BaiduPushMessage.AndroidPushMessage {
+        return BaiduPushMessage.AndroidPushMessage(config).apply {
+            req = BaiduPushMessage.AndroidMsgBuilder(androidConfigProvider(config)).reqBuilder()
+        }
+    }
+
+    @JvmOverloads
+    fun buildMsgToIos(config: String = "default", reqBuilder: BaiduPushMessage.IOSMsgBuilder.() -> PushRequest): BaiduPushMessage.IosPushMessage {
+        return BaiduPushMessage.IosPushMessage(config).apply {
+            req = BaiduPushMessage.IOSMsgBuilder(iosConfigProvider(config)).reqBuilder()
+        }
     }
 
 }

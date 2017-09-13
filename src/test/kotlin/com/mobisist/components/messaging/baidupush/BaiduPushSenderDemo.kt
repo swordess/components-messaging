@@ -7,17 +7,18 @@ fun main(args: Array<String>) {
 
 private fun sendAndroidPush() {
     val sender = BaiduPushSender().apply {
-        androidConfig = BaiduPushConfig().apply {
-            apiKey = "gv0ft0gzCdO19FL5OgYIqYG9"
-            secretKey = "zrRgdC2LlPancB3yxrmacyosdtLh3k92"
+        androidConfigProvider = {
+            BaiduPushConfig.AndroidPushConfig().apply {
+                apiKey = "gv0ft0gzCdO19FL5OgYIqYG9"
+                secretKey = "zrRgdC2LlPancB3yxrmacyosdtLh3k92"
+            }
         }
     }
 
-    val msg = BaiduPushMessage.toAndroid {
+    val msg = sender.buildMsgToAndroid {
         pushMsgToSingleDeviceRequest {
             channelId = "3478330428537063857"
             messageType = MessageType.NOTIFICATION.intValue
-            setDeviceType(DeviceType.ANDROID.intValue)
             // 5 mins
             msgExpires = 300
 
@@ -40,20 +41,21 @@ private fun sendAndroidPush() {
 
 private fun sendIosPush() {
     val sender = BaiduPushSender().apply {
-        iosConfig = BaiduPushConfig().apply {
-            apiKey = "gv0ft0gzCdO19FL5OgYIqYG9"
-            secretKey = "zrRgdC2LlPancB3yxrmacyosdtLh3k92"
+        iosConfigProvider = {
+            BaiduPushConfig.IOSPushConfig().apply {
+                apiKey = "gv0ft0gzCdO19FL5OgYIqYG9"
+                secretKey = "zrRgdC2LlPancB3yxrmacyosdtLh3k92"
+                deployStatus = IOSDeployStatus.DEVELOPMENT
+            }
         }
     }
 
-    val msg = BaiduPushMessage.toIos {
+    val msg = sender.buildMsgToIos {
         pushMsgToSingleDeviceRequest {
             channelId = "3478330428537063857"
             messageType = MessageType.NOTIFICATION.intValue
-            setDeviceType(DeviceType.IOS.intValue)
             // 5 mins
             msgExpires = 300
-            deployStatus = 1
 
             alert = "Title goes here"
             sound = "default"
