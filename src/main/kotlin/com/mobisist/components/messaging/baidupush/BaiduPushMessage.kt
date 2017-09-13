@@ -20,6 +20,11 @@ enum class DeviceType(val intValue: Int) {
     IOS(4)
 }
 
+enum class IOSDeployStatus(val intValue: Int) {
+    DEVELOPMENT(1),
+    PRODUCT(2)
+}
+
 sealed class BaiduPushMessage : Message {
 
     lateinit var req: PushRequest

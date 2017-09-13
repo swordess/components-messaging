@@ -15,7 +15,7 @@ class YunPianConfig {
 
 open class YunPianSender : MessageSender<SmsMessage, YunPianResponse> {
 
-    protected val logger: Logger = LoggerFactory.getLogger(YunPianSender::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(YunPianSender::class.java)
 
     lateinit var config: YunPianConfig
 

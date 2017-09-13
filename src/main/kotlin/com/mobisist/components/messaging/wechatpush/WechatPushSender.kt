@@ -16,7 +16,7 @@ class WechatPushMessagingException(cause: Throwable) : MessagingException(cause)
 
 open class WechatPushSender : MessageSender<WechatPushMessage, Unit> {
 
-    protected val logger: Logger = LoggerFactory.getLogger(WechatPushSender::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(WechatPushSender::class.java)
 
     var templateIdProvider: TemplateIdProvider? = null
 

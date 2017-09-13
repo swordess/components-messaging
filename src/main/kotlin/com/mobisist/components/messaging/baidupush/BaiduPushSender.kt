@@ -23,7 +23,7 @@ class BaiduPushMessagingException : MessagingException {
 
 open class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
 
-    protected val logger: Logger = LoggerFactory.getLogger(BaiduPushSender::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(BaiduPushSender::class.java)
 
     lateinit var androidConfig: BaiduPushConfig
     lateinit var iosConfig: BaiduPushConfig
