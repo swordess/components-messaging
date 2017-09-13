@@ -31,7 +31,7 @@ sealed class BaiduPushMessage(val config: String) : Message {
     lateinit var req: PushRequest
 
     class AndroidPushMessage @JvmOverloads constructor(config: String = "default") : BaiduPushMessage(config)
-    class IosPushMessage @JvmOverloads constructor(config: String = "default") : BaiduPushMessage(config)
+    class IOSPushMessage @JvmOverloads constructor(config: String = "default") : BaiduPushMessage(config)
 
     open class MsgBuilder<out C : BaiduPushConfig>(private val pushConfig: C) {
 

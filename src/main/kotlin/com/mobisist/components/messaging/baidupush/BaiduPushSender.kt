@@ -66,7 +66,7 @@ open class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
         try {
             val client = when(msg) {
                 is BaiduPushMessage.AndroidPushMessage -> androidClientFor(msg.config)
-                is BaiduPushMessage.IosPushMessage -> iosClientFor(msg.config)
+                is BaiduPushMessage.IOSPushMessage -> iosClientFor(msg.config)
             }
 
             val req = msg.req
@@ -101,8 +101,8 @@ open class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
     }
 
     @JvmOverloads
-    fun buildMsgToIos(config: String = "default", reqBuilder: BaiduPushMessage.IOSMsgBuilder.() -> PushRequest): BaiduPushMessage.IosPushMessage {
-        return BaiduPushMessage.IosPushMessage(config).apply {
+    fun buildMsgToIOS(config: String = "default", reqBuilder: BaiduPushMessage.IOSMsgBuilder.() -> PushRequest): BaiduPushMessage.IOSPushMessage {
+        return BaiduPushMessage.IOSPushMessage(config).apply {
             req = BaiduPushMessage.IOSMsgBuilder(iosConfigProvider(config)).reqBuilder()
         }
     }

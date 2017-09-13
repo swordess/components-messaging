@@ -9,7 +9,7 @@ public class BaiduPushSenderJavaDemo {
 
     public static void main(String[] args) {
         sendAndroidPush();
-        sendIosPush();
+        sendIOSPush();
     }
 
     private static void sendAndroidPush() {
@@ -44,7 +44,7 @@ public class BaiduPushSenderJavaDemo {
         }
     }
 
-    private static void sendIosPush() {
+    private static void sendIOSPush() {
         BaiduPushConfig.IOSPushConfig defaultConfig = new BaiduPushConfig.IOSPushConfig();
         defaultConfig.setApiKey("gv0ft0gzCdO19FL5OgYIqYG9");
         defaultConfig.setSecretKey("zrRgdC2LlPancB3yxrmacyosdtLh3k92");
@@ -53,7 +53,7 @@ public class BaiduPushSenderJavaDemo {
         BaiduPushSender sender = new BaiduPushSender();
         sender.setIosConfigProvider((config) -> defaultConfig);
 
-        BaiduPushMessage msg = sender.buildMsgToIos(dsl ->
+        BaiduPushMessage msg = sender.buildMsgToIOS(dsl ->
                 dsl.pushMsgToSingleDeviceRequest(req -> {
                     req.setChannelId("3478330428537063857");
                     req.setMessageType(MessageType.NOTIFICATION.getIntValue());

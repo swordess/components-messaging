@@ -2,7 +2,7 @@ package com.mobisist.components.messaging.baidupush
 
 fun main(args: Array<String>) {
     sendAndroidPush()
-    sendIosPush()
+    sendIOSPush()
 }
 
 private fun sendAndroidPush() {
@@ -39,7 +39,7 @@ private fun sendAndroidPush() {
     }
 }
 
-private fun sendIosPush() {
+private fun sendIOSPush() {
     val sender = BaiduPushSender().apply {
         iosConfigProvider = {
             BaiduPushConfig.IOSPushConfig().apply {
@@ -50,7 +50,7 @@ private fun sendIosPush() {
         }
     }
 
-    val msg = sender.buildMsgToIos {
+    val msg = sender.buildMsgToIOS {
         pushMsgToSingleDeviceRequest {
             channelId = "3478330428537063857"
             messageType = MessageType.NOTIFICATION.intValue
