@@ -4,7 +4,9 @@ import com.baidu.yun.push.auth.PushKeyPair
 import com.baidu.yun.push.client.BaiduPushClient
 import com.baidu.yun.push.exception.PushClientException
 import com.baidu.yun.push.exception.PushServerException
+import com.baidu.yun.push.model.PushMsgToAllRequest
 import com.baidu.yun.push.model.PushMsgToSingleDeviceRequest
+import com.baidu.yun.push.model.PushMsgToTagRequest
 import com.baidu.yun.push.model.PushRequest
 import com.mobisist.components.messaging.Message
 import com.mobisist.components.messaging.MessageSender
@@ -64,7 +66,7 @@ open class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
     @Throws(BaiduPushMessagingException::class)
     override fun send(msg: BaiduPushMessage) {
         try {
-            val client = when(msg) {
+            val client = when (msg) {
                 is BaiduPushMessage.AndroidPushMessage -> androidClientFor(msg.config)
                 is BaiduPushMessage.IOSPushMessage -> iosClientFor(msg.config)
             }
@@ -72,6 +74,8 @@ open class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
             val req = msg.req
             when (req) {
                 is PushMsgToSingleDeviceRequest -> sendSingleMsg(client, req)
+                is PushMsgToTagRequest -> sendTagMsg(client, req)
+                is PushMsgToAllRequest -> sendBroadcastMsg(client, req)
                 else -> throw BaiduPushMessagingException("unsupported req type: ${msg.req.javaClass}")
             }
         } catch (e: BaiduPushMessagingException) {
@@ -90,6 +94,16 @@ open class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
 
     private fun sendSingleMsg(client: BaiduPushClient, msg: PushMsgToSingleDeviceRequest) {
         val resp = client.pushMsgToSingleDevice(msg)
+        logger.debug("msgId: ${resp.msgId}, sendTime: ${resp.sendTime}")
+    }
+
+    private fun sendTagMsg(client: BaiduPushClient, msg: PushMsgToTagRequest) {
+        val resp = client.pushMsgToTag(msg)
+        logger.debug("msgId: ${resp.msgId}, sendTime: ${resp.sendTime}")
+    }
+
+    private fun sendBroadcastMsg(client: BaiduPushClient, msg: PushMsgToAllRequest) {
+        val resp = client.pushMsgToAll(msg)
         logger.debug("msgId: ${resp.msgId}, sendTime: ${resp.sendTime}")
     }
 

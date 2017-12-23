@@ -2,15 +2,15 @@ package com.mobisist.components.messaging.baidupush
 
 fun main(args: Array<String>) {
     sendAndroidPush()
-    sendIOSPush()
+//    sendIOSPush()
 }
 
 private fun sendAndroidPush() {
     val sender = BaiduPushSender().apply {
         androidConfigProvider = {
             BaiduPushConfig.AndroidPushConfig().apply {
-                apiKey = "gv0ft0gzCdO19FL5OgYIqYG9"
-                secretKey = "zrRgdC2LlPancB3yxrmacyosdtLh3k92"
+                apiKey = "G0q2pyhUZ2if01LDs70ccZIpcNMnj7NU"
+                secretKey = "w8etzvSbcmXTmlVMP7tkoCPbUiBPiXhj"
             }
         }
     }
@@ -32,10 +32,48 @@ private fun sendAndroidPush() {
         }
     }
 
+    val tagMsg = sender.buildMsgToAndroid {
+        pushMsgToTagRequest {
+            tagName = "t-xiaoguan-2"
+            messageType = MessageType.NOTIFICATION.rawValue
+            setDeviceType(DeviceType.ANDROID.rawValue)
+            // 5 mins
+            msgExpires = 300
+
+            title = "this is a tag msg"
+            description = "Tag msg test"
+
+            // customized body when send to android devices
+            custom_content = mapOf(
+                    "myKey" to "myValue"
+            )
+        }
+    }
+
+    val allMsg = sender.buildMsgToAndroid {
+        pushMsgToAllRequest {
+            messageType = MessageType.NOTIFICATION.rawValue
+            setDeviceType(DeviceType.ANDROID.rawValue)
+            // 5 mins
+            msgExpires = 300
+
+            title = "this is a broadcast msg"
+            description = "broadcast msg test"
+
+            // customized body when send to android devices
+            custom_content = mapOf(
+                    "myKey" to "myValue"
+            )
+        }
+    }
+
     try {
         sender.send(msg)
+        sender.send(tagMsg)
+        sender.send(allMsg)
     } catch (e: BaiduPushMessagingException) {
         // you can handle exception here
+        println(e)
     }
 }
 

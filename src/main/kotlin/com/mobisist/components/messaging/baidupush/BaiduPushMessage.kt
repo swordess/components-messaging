@@ -1,6 +1,8 @@
 package com.mobisist.components.messaging.baidupush
 
+import com.baidu.yun.push.model.PushMsgToAllRequest
 import com.baidu.yun.push.model.PushMsgToSingleDeviceRequest
+import com.baidu.yun.push.model.PushMsgToTagRequest
 import com.baidu.yun.push.model.PushRequest
 import com.google.gson.Gson
 import com.mobisist.components.messaging.Message
@@ -35,6 +37,7 @@ sealed class BaiduPushMessage(val config: String) : Message {
     open class MsgBuilder<out C : BaiduPushConfig>(private val pushConfig: C) {
 
         internal val body = mutableMapOf<String, Any?>()
+        private val gson = Gson()
 
         private val defaultSettings = mutableMapOf<Class<out PushRequest>, Any>()
 
@@ -46,6 +49,27 @@ sealed class BaiduPushMessage(val config: String) : Message {
             req.init()
             if (generateMsg) {
                 req.message = Gson().toJson(body)
+            }
+            return req
+        }
+
+        @JvmOverloads
+        fun pushMsgToTagRequest(generateMsg: Boolean = true, init: PushMsgToTagRequest.() -> Unit): PushMsgToTagRequest {
+            val req = PushMsgToTagRequest()
+            req.init()
+            if (generateMsg) {
+                req.message = gson.toJson(body)
+            }
+            return req
+        }
+
+
+        @JvmOverloads
+        fun pushMsgToAllRequest(generateMsg: Boolean = true, init: PushMsgToAllRequest.() -> Unit): PushMsgToAllRequest {
+            val req = PushMsgToAllRequest()
+            req.init()
+            if (generateMsg) {
+                req.message = gson.toJson(body)
             }
             return req
         }
