@@ -2,7 +2,8 @@ package com.mobisist.components.messaging.baidupush
 
 fun main(args: Array<String>) {
     sendAndroidPush()
-//    sendIOSPush()
+    sendIOSPush()
+    deleteDeviceFromTag()
 }
 
 private fun sendAndroidPush() {
@@ -107,4 +108,16 @@ private fun sendIOSPush() {
     } catch (e: BaiduPushMessagingException) {
         // you can handle exception here
     }
+}
+
+private fun deleteDeviceFromTag() {
+    val sender = BaiduPushSender().apply {
+        androidConfigProvider = {
+            BaiduPushConfig.AndroidPushConfig().apply {
+                apiKey = "G0q2pyhUZ2if01LDs70ccZIpcNMnj7NU"
+                secretKey = "w8etzvSbcmXTmlVMP7tkoCPbUiBPiXhj"
+            }
+        }
+    }
+    sender.deleteDeviceFromTag("default", DeviceType.ANDROID, "t-xiaoguan-13", "3460647103306423663")
 }

@@ -4,10 +4,7 @@ import com.baidu.yun.push.auth.PushKeyPair
 import com.baidu.yun.push.client.BaiduPushClient
 import com.baidu.yun.push.exception.PushClientException
 import com.baidu.yun.push.exception.PushServerException
-import com.baidu.yun.push.model.PushMsgToAllRequest
-import com.baidu.yun.push.model.PushMsgToSingleDeviceRequest
-import com.baidu.yun.push.model.PushMsgToTagRequest
-import com.baidu.yun.push.model.PushRequest
+import com.baidu.yun.push.model.*
 import com.mobisist.components.messaging.Message
 import com.mobisist.components.messaging.MessageSender
 import com.mobisist.components.messaging.MessagingException
@@ -34,7 +31,6 @@ class BaiduPushMessagingException : MessagingException {
 }
 
 open class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
-
     private val logger: Logger = LoggerFactory.getLogger(BaiduPushSender::class.java)
 
     private val androidClientCaches = ConcurrentHashMap<String, BaiduPushClient>()
@@ -118,6 +114,35 @@ open class BaiduPushSender : MessageSender<BaiduPushMessage, Unit> {
     fun buildMsgToIOS(config: String = "default", reqBuilder: BaiduPushMessage.IOSMsgBuilder.() -> PushRequest): BaiduPushMessage.IOSPushMessage {
         return BaiduPushMessage.IOSPushMessage(config).apply {
             req = BaiduPushMessage.IOSMsgBuilder(iosConfigProvider(config)).reqBuilder()
+        }
+    }
+
+    fun deleteDeviceFromTag(config: String = "default", deviceType: DeviceType, tagName: String, vararg channelIds: String) {
+        val client = when (deviceType) {
+            DeviceType.ANDROID ->
+                androidClientFor(config)
+            DeviceType.IOS ->
+                iosClientFor(config)
+        }
+        val request = DeleteDevicesFromTagRequest().apply {
+            this.tagName = tagName
+            this.setChannelIds(channelIds)
+            this.setDeviceType(deviceType.rawValue)
+        }
+        try {
+            val response = client.deleteDevicesFromTag(request)
+            logger.debug(response.toString())
+        } catch (e: BaiduPushMessagingException) {
+            throw e
+        } catch (e: PushClientException) {
+            logger.error("cannot push", e)
+        } catch (e: PushServerException) {
+            // 30608: Bind Relation Not Found 绑定关系未找到或不存在
+            // See: http://push.baidu.com/doc/restapi/error_code
+            when (e.errorCode) {
+                30608 -> logger.info("requestId: ${e.requestId}, errorCode=${e.errorCode}, errorMsg: ${e.errorMsg}")
+                else -> logger.error("requestId: ${e.requestId}, errorCode=${e.errorCode}, errorMsg: ${e.errorMsg}", e)
+            }
         }
     }
 
