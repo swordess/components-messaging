@@ -39,7 +39,7 @@ open class YunPianSender : MessageSender<SmsMessage, YunPianResponse> {
             val responseJson = Gson().fromJson(responseText, Map::class.java) as Map<String, Any>
             val response = YunPianResponse(responseJson)
             if (0 != response.code) {
-                throw SmsMessagingException(response.msg)
+                throw SmsMessagingException(response.code, response.msg, response.detail)
             }
 
             return response
@@ -47,7 +47,7 @@ open class YunPianSender : MessageSender<SmsMessage, YunPianResponse> {
         } catch (e: SmsMessagingException) {
             throw e
         } catch (e: Exception) {
-            throw SmsMessagingException(e)
+            throw SmsMessagingException(e, "")
         }
     }
 

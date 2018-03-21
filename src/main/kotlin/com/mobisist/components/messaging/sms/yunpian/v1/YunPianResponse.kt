@@ -8,6 +8,9 @@ class YunPianResponse(private val map: Map<String, Any?>) {
     val msg: String
         get() = map["msg"].toString()
 
+    val detail: String
+        get() = map["detail"]?.toString() ?: ""
+
     fun get(key: String): Any? = map[key]
 
     override fun toString() = map.toString()
